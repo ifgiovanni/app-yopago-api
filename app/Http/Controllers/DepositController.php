@@ -20,7 +20,7 @@ class DepositController extends Controller
         //$token = $request->header('Authorization');
         $user = auth()->user();
 
-        $options = DepositOption::select("id", "name", "description", "image", "validation_field", "validation_desc", "active")->get();
+        $options = DepositOption::select("id", "name", "description", "image", "validation_field", "active", "options")->get();
 
         $data = [
             'options' => $options

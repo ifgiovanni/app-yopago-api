@@ -57,7 +57,9 @@ Route::group(['prefix'=>'admin','as'=>'admin.', 'middleware' => 'auth:sanctum'],
 
     // deposits
     Route::get('/deposits', [DepositController::class, 'list']);
+    Route::get('/deposits', [DepositController::class, 'list']);
     Route::post('/deposits/store', [DepositController::class, 'store']);
 });
 
+Route::get('/deposits', [DepositController::class, 'list']);
 Route::get("/test", [ApiController::class, 'test']);
