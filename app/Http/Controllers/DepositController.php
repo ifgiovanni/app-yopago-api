@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\Transaction;
 use App\Models\UserRole;
 use App\Http\Controllers\Controller;
+use App\Models\DepositOption;
 use Auth;
 
 class DepositController extends Controller
@@ -32,6 +33,12 @@ class DepositController extends Controller
         
         $user = auth()->user();
         
+        $user_role = UserRole::where('user_id', $user->id)->first();
+        // check if rol is admin or self user
+        if($user_role->role->code != "admin"){
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
         $type = $request->input('type');
         $name = $request->input('name');
         $description = $request->input('description');
@@ -40,7 +47,7 @@ class DepositController extends Controller
         $account_type = $request->input('account_type');
         $description = $request->input('description');
         $details = $request->input('details');
-        $status = $request->input('status');
+        $active = $request->input('active');
         $validation_field = $request->input('validation_field');
 
         // make json with account_number, account_name, account_type, description, details
@@ -57,7 +64,7 @@ class DepositController extends Controller
         $deposit_option->type = $type;
         $deposit_option->description = $description;
         $deposit_option->options = json_encode($options);
-        $deposit_option->status = $status;
+        $deposit_option->active = $active;
         $deposit_option->validation_field = $validation_field;
         $deposit_option->save();
 
@@ -66,6 +73,7 @@ class DepositController extends Controller
         ];
     
         return response()->json($data);
+
     }
 
 }
