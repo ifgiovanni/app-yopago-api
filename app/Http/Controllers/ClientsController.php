@@ -30,8 +30,27 @@ class ClientsController extends Controller
         $limit_clients = $request->limit_clients ? $request->limit_clients : 10;
         $offset_clients = ($page_clients - 1) * $limit_clients;
 
+        // could be all, unverified_phone, unverified_mail, kyc_pending, banned, with_balance, 
+        $status = $request->status ? $request->status : "all";
+
         $clients = User::select("id", "name", "last_name", "referral_code","email","created_at", "balance", "last_login")
+                        ->when($status == "unverified_phone", function($query){
+                            return $query->where("phone_verified", 0);
+                        })
+                        ->when($status == "unverified_mail", function($query){
+                            return $query->where("email_verified", 0);
+                        })
+                        ->when($status == "kyc_pending", function($query){
+                            return $query->where("kyc", 0);
+                        })
+                        ->when($status == "banned", function($query){
+                            return $query->where("banned", 1);
+                        })
+                        ->when($status == "with_balance", function($query){
+                            return $query->where("balance", ">", 0);
+                        })
                         ->offset($offset_clients)->limit($limit_clients)
+                        ->orderBy('created_at', 'desc')
                         ->get();
 
         // map balance to cents to dollars
