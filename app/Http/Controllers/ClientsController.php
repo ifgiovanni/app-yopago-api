@@ -152,4 +152,26 @@ class ClientsController extends Controller
 
         return response()->json($data);
     }
+
+    public function saveRole(Request $request){
+        $user = auth()->user();
+
+        $user_role = UserRole::where('user_id', $user->id)->first();
+        // check if rol is admin or self user
+        if($user_role->role->code != "admin"){
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        $role = Role::where("code", $request->role)->first();
+        if(!$role){
+            return response()->json(['error' => 'Role not found'], 404);
+        }
+
+        $role->per_increase = $request->per_increase / 100;
+        $role->per_profit = $request->per_profit / 100;
+        $role->per_refer = $request->per_refer / 100;
+        $role->save();
+
+        return response()->json(['message' => 'Role updated']);
+    }
 }

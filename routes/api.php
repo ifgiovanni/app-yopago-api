@@ -53,6 +53,7 @@ Route::group(['prefix'=>'admin','as'=>'admin.', 'middleware' => 'auth:sanctum'],
     // clients
     Route::get('/clients', [ClientsController::class, 'list']);
     Route::get('/clients/roles', [ClientsController::class, 'getRoles']);
+    Route::post('/clients/roles/save', [ClientsController::class, 'saveRole']);
     Route::get('/clients/{id}', [ClientsController::class, 'getUserDetails']);
 
     // deposits
