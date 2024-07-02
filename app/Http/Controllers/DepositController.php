@@ -47,7 +47,7 @@ class DepositController extends Controller
         $account_type = $request->input('account_type');
         $description = $request->input('description');
         $details = $request->input('details');
-        $active = $request->input('active');
+        $active = $request->input('status');
         $validation_field = $request->input('validation_field');
 
         // make json with account_number, account_name, account_type, description, details
@@ -59,14 +59,39 @@ class DepositController extends Controller
             'details' => $details
         ];
 
-        $deposit_option = new DepositOption();
-        $deposit_option->name = $name;
-        $deposit_option->type = $type;
-        $deposit_option->description = $description;
-        $deposit_option->options = json_encode($options);
-        $deposit_option->active = $active;
-        $deposit_option->validation_field = $validation_field;
-        $deposit_option->save();
+        // if id is set, update
+        if($request->input('id')){
+            $deposit_option = DepositOption::find($request->input('id'));
+            $deposit_option->name = $name;
+            $deposit_option->type = $type;
+            $deposit_option->description = $description;
+            $deposit_option->options = json_encode($options);
+            $deposit_option->active = $active;
+            $deposit_option->validation_field = $validation_field;
+            $deposit_option->save();
+
+            $data = [
+                'message' => 'Deposit option updated successfully'
+            ];
+        
+            return response()->json($data);
+        }else{
+            // if id is not set, create
+            $deposit_option = new DepositOption();
+            $deposit_option->name = $name;
+            $deposit_option->type = $type;
+            $deposit_option->description = $description;
+            $deposit_option->options = json_encode($options);
+            $deposit_option->active = $active;
+            $deposit_option->validation_field = $validation_field;
+            $deposit_option->save();
+
+            $data = [
+                'message' => 'Deposit option created successfully'
+            ];
+        
+            return response()->json($data);
+        }
 
         $data = [
             'message' => 'Deposit option created successfully'
